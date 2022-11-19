@@ -4,7 +4,6 @@ import {
   Environment,
   useGLTF,
   Center,
-  Loader,
   useProgress,
   Stats,
 } from "@react-three/drei";
@@ -20,12 +19,7 @@ export default function App() {
   // const fbx3 = useFBX("/Velf.fbx");
   // const fbx4 = useFBX("Yellow_Lady.fbx");
 
-  const { scene } = useGLTF("/LadyK_out/LadyK.gltf");
-  const { scene: scene2 } = useGLTF("/Velf_out/Velf.gltf");
-  const { scene: scene3 } = useGLTF("/purple-hero_out/purple-hero.gltf");
-  const { scene: scene4 } = useGLTF("/Yellow_Lady_out/Yellow_Lady.gltf");
-
-  const { progress } = useProgress();
+  const { loaded, total, progress } = useProgress();
 
   return (
     <>
@@ -66,15 +60,16 @@ export default function App() {
         <Suspense fallback={null}>
           <group>
             <Center>
-              {selectedModel === 1 && <primitive object={scene} />}
-              {selectedModel === 2 && <primitive object={scene2} />}
-              {selectedModel === 3 && <primitive object={scene3} />}
-              {selectedModel === 4 && <primitive object={scene4} />}
+              <Model selectedModel={selectedModel} />
             </Center>
           </group>
         </Suspense>
       </Canvas>
-      {progress < 100 && <div className="loading">Loading... {progress}%</div>}
+      {progress < 100 && (
+        <div className="loading">
+          Loading... {loaded}/{total} Elements
+        </div>
+      )}
       {progress === 100 && (
         <div className="interface">
           <button
@@ -114,3 +109,26 @@ export default function App() {
     </>
   );
 }
+
+const Model = ({ selectedModel }: { selectedModel: 1 | 2 | 3 | 4 }) => {
+  const { scene } = useGLTF("/LadyK_out/LadyK.gltf");
+  const { scene: scene2 } = useGLTF("/Velf_out/Velf.gltf");
+  const { scene: scene3 } = useGLTF("/purple-hero_out/purple-hero.gltf");
+  const { scene: scene4 } = useGLTF("/Yellow_Lady_out/Yellow_Lady.gltf");
+
+  return (
+    <primitive
+      object={
+        selectedModel === 1
+          ? scene
+          : selectedModel === 2
+          ? scene2
+          : selectedModel === 3
+          ? scene3
+          : selectedModel === 4
+          ? scene4
+          : null
+      }
+    />
+  );
+};
