@@ -2,20 +2,34 @@ import { Canvas } from "@react-three/fiber";
 import {
   OrbitControls,
   Environment,
-  useFBX,
+  useGLTF,
   Center,
   Loader,
   useProgress,
   Stats,
 } from "@react-three/drei";
-import { EffectComposer, SMAA, SSAO } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
-import { Suspense } from "react";
+// import { EffectComposer, SMAA, SSAO } from "@react-three/postprocessing";
+// import { BlendFunction } from "postprocessing";
+import { Suspense, useState } from "react";
 
 export default function App() {
   const { progress } = useProgress();
+  const [selectedModel, setSelectedModel] = useState<1 | 2 | 3 | 4>(1);
 
-  const fbx = useFBX("/LadyK.fbx");
+  // const fbx1 = useFBX("/LadyK.fbx");
+  // const fbx2 = useFBX("purple-hero.fbx");
+  // const fbx3 = useFBX("/Velf.fbx");
+  // const fbx4 = useFBX("Yellow_Lady.fbx");
+
+  const { scene } = useGLTF("/LadyK_out/LadyK.gltf");
+  const { scene: scene2 } = useGLTF("/Velf_out/Velf.gltf");
+  const { scene: scene3 } = useGLTF("/purple-hero_out/purple-hero.gltf");
+  const { scene: scene4 } = useGLTF("/Yellow_Lady_out/Yellow_Lady.gltf");
+
+  useGLTF.preload("/LadyK_out/LadyK.gltf");
+  useGLTF.preload("/Velf_out/Velf.gltf");
+  useGLTF.preload("/purple-hero_out/purple-hero.gltf");
+  useGLTF.preload("/Yellow_Lady_out/Yellow_Lady.gltf");
 
   return (
     <>
@@ -56,12 +70,51 @@ export default function App() {
         <Suspense fallback={null}>
           <group>
             <Center>
-              <primitive object={fbx} scale={0.02} />
+              {selectedModel === 1 && <primitive object={scene} />}
+              {selectedModel === 2 && <primitive object={scene2} />}
+              {selectedModel === 3 && <primitive object={scene3} />}
+              {selectedModel === 4 && <primitive object={scene4} />}
             </Center>
           </group>
         </Suspense>
       </Canvas>
       {progress < 100 && <Loader />}
+      {progress === 100 && (
+        <div className="interface">
+          <button
+            style={{
+              backgroundColor: selectedModel === 1 ? "skyblue" : "white",
+            }}
+            onClick={() => setSelectedModel(1)}
+          >
+            LadyK
+          </button>
+          <button
+            style={{
+              backgroundColor: selectedModel === 2 ? "skyblue" : "white",
+            }}
+            onClick={() => setSelectedModel(2)}
+          >
+            Velf
+          </button>
+          <button
+            style={{
+              backgroundColor: selectedModel === 3 ? "skyblue" : "white",
+            }}
+            onClick={() => setSelectedModel(3)}
+          >
+            Purple Hero
+          </button>
+          <button
+            style={{
+              backgroundColor: selectedModel === 4 ? "skyblue" : "white",
+            }}
+            onClick={() => setSelectedModel(4)}
+          >
+            Yellow Lady
+          </button>
+        </div>
+      )}
     </>
   );
 }
