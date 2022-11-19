@@ -13,7 +13,6 @@ import {
 import { Suspense, useState } from "react";
 
 export default function App() {
-  const { progress } = useProgress();
   const [selectedModel, setSelectedModel] = useState<1 | 2 | 3 | 4>(1);
 
   // const fbx1 = useFBX("/LadyK.fbx");
@@ -26,10 +25,7 @@ export default function App() {
   const { scene: scene3 } = useGLTF("/purple-hero_out/purple-hero.gltf");
   const { scene: scene4 } = useGLTF("/Yellow_Lady_out/Yellow_Lady.gltf");
 
-  useGLTF.preload("/LadyK_out/LadyK.gltf");
-  useGLTF.preload("/Velf_out/Velf.gltf");
-  useGLTF.preload("/purple-hero_out/purple-hero.gltf");
-  useGLTF.preload("/Yellow_Lady_out/Yellow_Lady.gltf");
+  const { progress } = useProgress();
 
   return (
     <>
@@ -78,7 +74,7 @@ export default function App() {
           </group>
         </Suspense>
       </Canvas>
-      {progress < 100 && <Loader />}
+      {progress < 100 && <div className="loading">Loading... {progress}%</div>}
       {progress === 100 && (
         <div className="interface">
           <button
